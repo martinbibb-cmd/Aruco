@@ -26,31 +26,37 @@ def generate_aruco_marker(marker_id, dictionary_name='DICT_4X4_50', size=200, ou
     Returns:
         numpy.ndarray: The generated marker image
     """
-    # Map dictionary names to OpenCV constants
+    # Map dictionary names to OpenCV constants and their max IDs
     aruco_dict_map = {
-        'DICT_4X4_50': cv2.aruco.DICT_4X4_50,
-        'DICT_4X4_100': cv2.aruco.DICT_4X4_100,
-        'DICT_4X4_250': cv2.aruco.DICT_4X4_250,
-        'DICT_4X4_1000': cv2.aruco.DICT_4X4_1000,
-        'DICT_5X5_50': cv2.aruco.DICT_5X5_50,
-        'DICT_5X5_100': cv2.aruco.DICT_5X5_100,
-        'DICT_5X5_250': cv2.aruco.DICT_5X5_250,
-        'DICT_5X5_1000': cv2.aruco.DICT_5X5_1000,
-        'DICT_6X6_50': cv2.aruco.DICT_6X6_50,
-        'DICT_6X6_100': cv2.aruco.DICT_6X6_100,
-        'DICT_6X6_250': cv2.aruco.DICT_6X6_250,
-        'DICT_6X6_1000': cv2.aruco.DICT_6X6_1000,
-        'DICT_7X7_50': cv2.aruco.DICT_7X7_50,
-        'DICT_7X7_100': cv2.aruco.DICT_7X7_100,
-        'DICT_7X7_250': cv2.aruco.DICT_7X7_250,
-        'DICT_7X7_1000': cv2.aruco.DICT_7X7_1000,
+        'DICT_4X4_50': (cv2.aruco.DICT_4X4_50, 49),
+        'DICT_4X4_100': (cv2.aruco.DICT_4X4_100, 99),
+        'DICT_4X4_250': (cv2.aruco.DICT_4X4_250, 249),
+        'DICT_4X4_1000': (cv2.aruco.DICT_4X4_1000, 999),
+        'DICT_5X5_50': (cv2.aruco.DICT_5X5_50, 49),
+        'DICT_5X5_100': (cv2.aruco.DICT_5X5_100, 99),
+        'DICT_5X5_250': (cv2.aruco.DICT_5X5_250, 249),
+        'DICT_5X5_1000': (cv2.aruco.DICT_5X5_1000, 999),
+        'DICT_6X6_50': (cv2.aruco.DICT_6X6_50, 49),
+        'DICT_6X6_100': (cv2.aruco.DICT_6X6_100, 99),
+        'DICT_6X6_250': (cv2.aruco.DICT_6X6_250, 249),
+        'DICT_6X6_1000': (cv2.aruco.DICT_6X6_1000, 999),
+        'DICT_7X7_50': (cv2.aruco.DICT_7X7_50, 49),
+        'DICT_7X7_100': (cv2.aruco.DICT_7X7_100, 99),
+        'DICT_7X7_250': (cv2.aruco.DICT_7X7_250, 249),
+        'DICT_7X7_1000': (cv2.aruco.DICT_7X7_1000, 999),
     }
     
     if dictionary_name not in aruco_dict_map:
         raise ValueError(f"Invalid dictionary name. Choose from: {list(aruco_dict_map.keys())}")
     
+    dict_constant, max_id = aruco_dict_map[dictionary_name]
+    
+    # Validate marker ID is within valid range for the dictionary
+    if marker_id < 0 or marker_id > max_id:
+        raise ValueError(f"Marker ID {marker_id} is out of range for {dictionary_name}. Valid range: 0-{max_id}")
+    
     # Get the ArUco dictionary
-    aruco_dict = cv2.aruco.getPredefinedDictionary(aruco_dict_map[dictionary_name])
+    aruco_dict = cv2.aruco.getPredefinedDictionary(dict_constant)
     
     # Generate the marker
     marker_image = cv2.aruco.generateImageMarker(aruco_dict, marker_id, size)
