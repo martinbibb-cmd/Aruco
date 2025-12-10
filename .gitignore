@@ -2,6 +2,7 @@
 *.png
 # But allow demo images
 !aruco_print_*_demo.png
+!demo_single_marker.png
 
 # Python
 __pycache__/
