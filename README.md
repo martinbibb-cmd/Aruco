@@ -2,7 +2,7 @@
 
 Generate ArUco markers for computer vision applications. ArUco markers are square fiducial markers commonly used for camera calibration, pose estimation, and augmented reality.
 
-This tool supports generating individual markers as well as print-ready layouts for credit cards, A4, and A5 paper formats.
+This tool provides both a **simple graphical user interface (UI)** and a command-line interface for generating individual markers as well as print-ready layouts for credit cards, A4, and A5 paper formats.
 
 ## Installation
 
@@ -19,7 +19,37 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Generate a Single Marker
+### Simple UI Application (Recommended)
+
+The easiest way to create and print ArUco markers is using the graphical interface:
+
+```bash
+python aruco_ui.py
+```
+
+The UI provides:
+- **Marker Settings**: Configure marker ID, dictionary type, and size
+- **Print Layout Options**: Choose between single marker, credit card, A5, or A4 layouts
+- **Live Preview**: See your marker before saving or printing
+- **Easy Export**: Save to file or print directly
+
+**UI Features:**
+1. **Marker ID**: Choose any ID from 0-999 (depending on dictionary)
+2. **Dictionary**: Select from 16 different ArUco dictionaries (4x4 to 7x7)
+3. **Size**: Adjust marker size in pixels (50-1000px)
+4. **Layout Type**: 
+   - `single`: Individual marker
+   - `creditcard`: Credit card size (85.60mm × 53.98mm)
+   - `a5`: A5 paper (148mm × 210mm) - up to 4 markers
+   - `a4`: A4 paper (210mm × 297mm) - up to 9 markers
+5. **DPI**: Set print resolution (150-600 DPI)
+6. **Generate**: Creates the marker and shows preview
+7. **Save As**: Export to PNG file
+8. **Print**: Opens in default image viewer for printing
+
+### Command-Line Interface
+
+#### Generate a Single Marker
 
 Generate a single ArUco marker with default settings (ID 0, DICT_4X4_50, 200x200 pixels):
 ```bash
@@ -31,7 +61,7 @@ Generate a marker with custom settings:
 python generate_aruco.py --id 5 --dict DICT_6X6_250 --size 300 --output my_marker.png
 ```
 
-### Generate Multiple Markers
+#### Generate Multiple Markers
 
 Generate 10 markers starting from ID 0:
 ```bash
@@ -43,23 +73,23 @@ Generate multiple markers with custom settings:
 python generate_aruco.py --id 20 --multiple 5 --dict DICT_5X5_100 --size 250 --output-dir my_markers
 ```
 
-### Generate Print Layouts
+#### Generate Print Layouts
 
 Create print-ready layouts optimized for different paper formats:
 
-#### Credit Card Format (85.60mm × 53.98mm)
+##### Credit Card Format (85.60mm × 53.98mm)
 Generate a single marker layout for credit card printing:
 ```bash
 python generate_aruco.py --print-layout creditcard --id 0
 ```
 
-#### A4 Paper Format (210mm × 297mm)
+##### A4 Paper Format (210mm × 297mm)
 Generate a 3×3 grid of 9 markers on A4 paper:
 ```bash
 python generate_aruco.py --print-layout a4 --id 0 --count 9
 ```
 
-#### A5 Paper Format (148mm × 210mm)
+##### A5 Paper Format (148mm × 210mm)
 Generate a 2×2 grid of 4 markers on A5 paper:
 ```bash
 python generate_aruco.py --print-layout a5 --id 0 --count 4
