@@ -1,6 +1,21 @@
 # ArUco Marker Generator
 
-Generate ArUco markers for computer vision applications. ArUco markers are square fiducial markers commonly used for camera calibration, pose estimation, and augmented reality.
+A simple, standalone tool to create and print ArUco markers for computer vision applications. ArUco markers are square fiducial markers commonly used for camera calibration, pose estimation, and augmented reality.
+
+## Quick Start
+
+**Want to create markers right now? Just run:**
+```bash
+pip install opencv-contrib-python numpy Pillow
+python aruco_ui.py
+```
+
+This opens a simple GUI where you can:
+- Choose marker ID and settings
+- Preview the marker
+- Save or print immediately
+
+## Features
 
 This tool provides both a **simple graphical user interface (UI)** and a command-line interface for generating individual markers as well as print-ready layouts for credit cards, A4, and A5 paper formats.
 
