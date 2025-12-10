@@ -11,6 +11,7 @@ import numpy as np
 from PIL import Image, ImageTk, ImageDraw, ImageFont
 import os
 import sys
+import tempfile
 
 # Import the core functions from generate_aruco
 from generate_aruco import generate_aruco_marker, generate_print_layout
@@ -26,6 +27,14 @@ class ArucoMarkerUI:
         # Current marker image
         self.current_marker = None
         self.current_image = None
+        
+        # Dictionary max IDs for validation
+        self.dict_max_ids = {
+            'DICT_4X4_50': 49, 'DICT_4X4_100': 99, 'DICT_4X4_250': 249, 'DICT_4X4_1000': 999,
+            'DICT_5X5_50': 49, 'DICT_5X5_100': 99, 'DICT_5X5_250': 249, 'DICT_5X5_1000': 999,
+            'DICT_6X6_50': 49, 'DICT_6X6_100': 99, 'DICT_6X6_250': 249, 'DICT_6X6_1000': 999,
+            'DICT_7X7_50': 49, 'DICT_7X7_100': 99, 'DICT_7X7_250': 249, 'DICT_7X7_1000': 999,
+        }
         
         # Create UI
         self.create_widgets()
@@ -54,8 +63,10 @@ class ArucoMarkerUI:
         ttk.Label(settings_frame, text="Marker ID:").grid(row=0, column=0, sticky=tk.W, pady=5)
         self.marker_id_var = tk.IntVar(value=0)
         self.marker_id_spin = ttk.Spinbox(settings_frame, from_=0, to=999, 
-                                          textvariable=self.marker_id_var, width=10)
+                                          textvariable=self.marker_id_var, width=10,
+                                          command=self.validate_marker_id)
         self.marker_id_spin.grid(row=0, column=1, sticky=tk.W, pady=5, padx=5)
+        self.marker_id_spin.bind('<FocusOut>', lambda e: self.validate_marker_id())
         
         # Dictionary selection
         ttk.Label(settings_frame, text="Dictionary:").grid(row=1, column=0, sticky=tk.W, pady=5)
@@ -67,6 +78,7 @@ class ArucoMarkerUI:
         dict_combo = ttk.Combobox(settings_frame, textvariable=self.dict_var, 
                                  values=dict_options, state='readonly', width=20)
         dict_combo.grid(row=1, column=1, sticky=tk.W, pady=5, padx=5)
+        dict_combo.bind('<<ComboboxSelected>>', lambda e: self.validate_marker_id())
         
         # Marker size
         ttk.Label(settings_frame, text="Marker Size (px):").grid(row=2, column=0, sticky=tk.W, pady=5)
@@ -134,6 +146,19 @@ class ArucoMarkerUI:
                               relief=tk.SUNKEN, anchor=tk.W)
         status_bar.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E))
         
+    def validate_marker_id(self):
+        """Validate that marker ID is within range for selected dictionary"""
+        try:
+            marker_id = self.marker_id_var.get()
+            dictionary = self.dict_var.get()
+            max_id = self.dict_max_ids.get(dictionary, 999)
+            
+            if marker_id > max_id:
+                self.marker_id_var.set(max_id)
+                self.status_var.set(f"Marker ID adjusted to {max_id} (max for {dictionary})")
+        except:
+            pass  # Ignore validation errors during initialization
+    
     def on_layout_change(self, event=None):
         """Enable/disable count spinner based on layout type"""
         layout = self.layout_var.get()
@@ -175,8 +200,8 @@ class ArucoMarkerUI:
                 marker_ids = list(range(marker_id, marker_id + count))
                 dpi = self.dpi_var.get()
                 
-                # Create temporary file for the layout
-                temp_path = '/tmp/temp_aruco_layout.png'
+                # Create temporary file for the layout using cross-platform temp directory
+                temp_path = os.path.join(tempfile.gettempdir(), 'temp_aruco_layout.png')
                 self.current_marker = generate_print_layout(
                     marker_ids=marker_ids,
                     dictionary_name=dictionary,
@@ -267,8 +292,8 @@ class ArucoMarkerUI:
             return
         
         try:
-            # Save to temporary file
-            temp_path = '/tmp/aruco_print_temp.png'
+            # Save to temporary file using cross-platform temp directory
+            temp_path = os.path.join(tempfile.gettempdir(), 'aruco_print_temp.png')
             self.current_marker.save(temp_path)
             
             # Try to open with default image viewer which usually has print option
