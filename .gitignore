@@ -1,5 +1,7 @@
 # Generated ArUco marker images
 *.png
+# But allow demo images
+!aruco_print_*_demo.png
 
 # Python
 __pycache__/
