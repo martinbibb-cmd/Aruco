@@ -204,15 +204,32 @@ def generate_print_layout(marker_ids, dictionary_name='DICT_4X4_50',
         layout_image.paste(marker_img_pil, (x, y))
         
         # Add marker ID label below the marker
+        font_size = max(12, marker_size_px // 20)
+        font = None
+        
+        # Try to load a TrueType font, fall back to default if not available
         try:
-            # Try to use a default font, fall back to basic if not available
-            font_size = max(12, marker_size_px // 20)
+            # Common font paths for different systems
+            font_paths = [
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",  # Linux
+                "/System/Library/Fonts/Helvetica.ttc",  # macOS
+                "C:\\Windows\\Fonts\\arial.ttf",  # Windows
+            ]
+            for font_path in font_paths:
+                try:
+                    font = ImageFont.truetype(font_path, font_size)
+                    break
+                except (OSError, IOError):
+                    continue
+        except Exception:
+            pass
+        
+        # Fall back to default font if TrueType font not found
+        if font is None:
             try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
-            except:
                 font = ImageFont.load_default()
-        except:
-            font = None
+            except Exception:
+                font = None
         
         label_text = f"ID: {marker_id}"
         
